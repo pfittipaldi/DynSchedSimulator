@@ -51,7 +51,7 @@ def Sim(BatchInput,memoDict):
     for tq in qs:
         nodeset = nodeset.union(set(tq))# Set of the nodes. May not be necessary now but will be useful going forward
     
-    Q = [Queue(tq[0],tq[1]) for tq in combinations(nodeset,2)]
+    Q = [Queue(tq[0],tq[1]) for tq in qs]
    
     [q.SetPhysical(ArrRates[q.nodes],t_step) for q in Q if q.nodes in ArrRates]
     [q.SetService(BatchInput[q.nodes],t_step) for q in Q if q.nodes in BatchInput]
@@ -70,13 +70,13 @@ def Sim(BatchInput,memoDict):
         AllQueues.Loss(Q, LossParam)
         AllQueues.Generate(Q)
         AllQueues.Consume(Q)
-        AllQueues.Schedule(Q,ConnectedTo)
-        AllQueues.Update(Q,BSM_Success_Probability)
+        R = AllQueues.Schedule(Q,ConnectedTo,ts)
+        AllQueues.Evolve(Q,M,R)
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]
     Tot_dem_rate = sum(BatchInput.values())
     unserved = sum(D_final)/(t_step*time_steps*Tot_dem_rate) #Unserved demands at the end divided by an approximation of the total incoming demand
-    if unserved >= 0.15:
+    if unserved >= 0.18:
         to_store = tuple(zip(*BatchInput.items()))
         memoDict[to_store] = (unserved, Q_final, D_final) 
     return unserved, Q_final, D_final

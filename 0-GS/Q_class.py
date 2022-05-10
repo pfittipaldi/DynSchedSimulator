@@ -70,25 +70,19 @@ class Queue:
             return 0
  
     def ScheduleIN(self):
-        self.scheduledin += self.ReadOut() # The pairs are actually scheduled in if the BSM at the middle node has had success, i.e. neither memory has failed
-
+        self.scheduledin += 1
+        
     def ScheduleOUT(self): # No need to call ReadOut here because the pair is consumed either way.
         self.scheduledout += 1
         self.Qdpairs -= 1
         
-    def Update(self,BSM):
-        self.Qdpairs += self.scheduledin 
-        self.scheduledin = 0
-        self.scheduledout = 0
-            
     def Consume(self):
             requested = max(self.demands,0)
             to_consume = min(requested,self.Qdpairs)
             for i in range(to_consume):
-                success = self.ReadOut() # Either zero or one
                 self.Qdpairs -= 1;
-                self.n_times_served += success;
-                self.demands -= success
+                self.n_times_served += 1;
+                self.demands -= 1
    
     def Demand(self): 
         D = 0;
@@ -96,11 +90,3 @@ class Queue:
             D = self.rng.poisson(self.PoissParam)
             self.demands += D
         return D
-    
-    def ReadOut(self): # Memories are always read by pairs in this implementation. This function checks whether one of the two memories have failed.
-        rng = self.rng    
-        rd = rng.random()
-        if rd < self.Lossprob:
-            return 0
-        else:
-            return 1

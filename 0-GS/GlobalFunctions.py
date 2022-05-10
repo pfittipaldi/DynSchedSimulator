@@ -23,16 +23,21 @@ def Consume(Q):
         if (queue.serv == "service"):
             queue.Consume();
 
-def Update(Q,BSM):
-    for q in Q:
-        q.Update(BSM)
+def Evolve(Q,M,R):
+    Q_t = np.array([q.Qdpairs for q in Q])
+    Q_t1 = Q_t + M@R
+    for i in range(len(Q)):
+        Q[i].Qdpairs = int(max(Q_t1[i],0))
                
 def Demand(Q):
     D = np.zeros(len(Q))
     for i in range(len(Q)):
         D[i] = Q[i].Demand();
             
-def Schedule(Q,connectedto):
+def Schedule(Q,connectedto,transitions):
+    transitions = np.array(transitions)
+    SETS_transitions = np.array([set(t) for t in transitions])
+    R = np.zeros(len(transitions)) # Output scheduling decision
     nodes = connectedto.keys()
     nodes = rd.sample(nodes,k=len(nodes))
     for ActiveNode in nodes:
@@ -41,12 +46,16 @@ def Schedule(Q,connectedto):
             parent1, parent2 = rd.sample(Q_Ready,2)
             childnode1 = next(i for i in parent1.nodes if i != ActiveNode); 
             childnode2 = next(i for i in parent2.nodes if i != ActiveNode); 
-            Childnodes = frozenset((childnode1,childnode2)) 
-            child = next((q for q in Q if q.nodes == Childnodes));
-            parent1.ScheduleOUT() 
+            
+            tr = set([childnode1,"[",ActiveNode,childnode2,"]"])
+            Rindex_toincrease = np.where(SETS_transitions == tr)
+            R[Rindex_toincrease]+=1
+            
+            parent1.ScheduleOUT() # This removes the scheduled pairs from the queues' pair counters
             parent2.ScheduleOUT()
-            child.ScheduleIN()
+            
             Q_Ready = [q for q in connectedto[ActiveNode] if q.Qdpairs> 0]
+    return R
  
     
     
