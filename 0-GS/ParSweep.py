@@ -12,13 +12,14 @@ import matplotlib.pyplot as plt
 import multiprocessing as mp
 from datetime import datetime
 
-with open("inputs.in") as f:
+
+with open("inputs.in") as f: 
     exec(f.read())
 
 if PhotonLifeTime == "Inf":
     LossParam = 1
 else:
-    LossParam = 1 - t_step/PhotonLifeTime
+    LossParam = 1 - npexp(-t_step/PhotonLifeTime)
 
 print(f"##############################Recap:##############################")
 print(f"- {topologyname} topology, {n_points}x{n_points} pixels")

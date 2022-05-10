@@ -8,7 +8,6 @@ Created on Tue Nov  9 16:29:20 2021
 
 
 import GlobalFunctions as AllQueues
-from itertools import combinations
 from Q_class import Queue
 import Fred as fg
 import numpy as np
@@ -20,7 +19,7 @@ with open("inputs.in") as f: # Importing variables
 def Sim(BatchInput,memoDict):
     flatInput = tuple(zip(*BatchInput.items())) # List of tuples
     # memoDict = dict() # Uncomment to DISABLE memoization
-    for i in memoDict.keys():
+    for i in memoDict.keys(): # If a lower load was unstable, skip computation.
         flatMemo = i
         if flatInput[1][0] >= flatMemo[1][0] and flatInput[1][1] >= flatMemo[1][1]:
             output = memoDict[i]
@@ -35,7 +34,7 @@ def Sim(BatchInput,memoDict):
     if PhotonLifeTime == "Inf":
         LossParam = 1
     else:
-        LossParam = 1 - t_step/PhotonLifeTime
+        LossParam = 1 - np.exp(-t_step/PhotonLifeTime)
     
     # Deriving the scheduling matrix and the lists of queues and scheduling rates
     # from FG's code, see fg.smalltest() for more information    

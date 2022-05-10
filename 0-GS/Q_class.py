@@ -1,18 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Nov  9 16:33:56 2021
-
-@author: paolo
-
-This class models the Queue object. It takes as inputs the nodes across which it is plugged and the various technological parameters.
-Methods:
-    -SetPhysical/SetVirtual
-    -Generate
-    -SwapFrom
-    -SwapTo
-    -Loss
-"""
 
 import numpy as np
 from KnockOffRand import KnockoffNpRandom
@@ -20,19 +7,15 @@ from KnockOffRand import KnockoffNpRandom
 
 class Queue:
 
-    def __init__(self,nd1,nd2,efficiency=1,tran_prob=1):
+    def __init__(self,nd1,nd2,tran_prob=1):
         self.nodes = frozenset([nd1,nd2]) # This set will contain the extremes of the queue. A set was chosen because it is UNORDERED.
-        self.eta = efficiency # SaR efficiency of the quantum memories
         self.type = "virtual" # Every queue is initialized as virtual.
         self.serv = "regular"
-        self.n_times_served = 0; # If this is a service queue, this counts the amount of times it was swapped to, regardless of having later lost or consumed the pair
         self.Qdpairs = 0; # Queued pairs, initialized to zero.
         self.T_prob = tran_prob # Transmission probability
-        self.scheduledin = 0
         self.scheduledout = 0
         self.demands = 0
-        self.Lossprob = 2*(1-efficiency) - (1-efficiency)**2 # Here, you excluded the case in which both memories failed. Why?
-        #self.rng = np.random.default_rng(seed=4529)
+        #self.rng = np.random.default_rng()
         self.rng = KnockoffNpRandom()
         
         
@@ -40,14 +23,6 @@ class Queue:
         self.type = "physical"
         arr_rate_steps = arr_rate_s*tstep # casting the rate per second to a rate per time step
         self.GenPParam = arr_rate_steps # Parameter for the Poisson Distribution of photon arrivals
-        
-    def Loss(self,LossParam):
-        rng=self.rng
-        to_check = self.Qdpairs
-        lost = sum(rng.random(size=to_check) <= (1-LossParam))
-        self.Qdpairs -= lost
-        return lost
-
     
     def SetVirtual(self):
         self.type = "virtual"
@@ -58,6 +33,20 @@ class Queue:
         self.PoissParam = Reqrate_steps # Parameter for the Poisson Distribution
         return self   
     
+    def Demand(self): 
+        B = 0;
+        if self.serv == "service":
+            B = self.rng.poisson(self.PoissParam)
+            self.demands += B
+        return B    
+    
+    def Loss(self,LossParam):
+        rng=self.rng
+        to_check = self.Qdpairs
+        lost = sum(rng.random(size=to_check) <= (1-LossParam))
+        self.Qdpairs -= lost
+        return lost
+
     def Generate(self):
         rng = self.rng
         if (self.type == "physical"): # Only physical queues generate, but implementing this check here allows to call...
@@ -68,25 +57,21 @@ class Queue:
             return generated
         else:
             return 0
- 
-    def ScheduleIN(self):
-        self.scheduledin += 1
-        
-    def ScheduleOUT(self): # No need to call ReadOut here because the pair is consumed either way.
+    
+    def Consume(self):
+        requested = max(self.demands,0)
+        to_consume = min(requested,self.Qdpairs)
+        self.Qdpairs -= to_consume
+        self.demands -= to_consume
+   
+    def ScheduleOUT(self): 
         self.scheduledout += 1
         self.Qdpairs -= 1
         
-    def Consume(self):
-            requested = max(self.demands,0)
-            to_consume = min(requested,self.Qdpairs)
-            for i in range(to_consume):
-                self.Qdpairs -= 1;
-                self.n_times_served += 1;
-                self.demands -= 1
-   
-    def Demand(self): 
-        D = 0;
-        if self.serv == "service":
-            D = self.rng.poisson(self.PoissParam)
-            self.demands += D
-        return D
+ 
+    
+    
+    
+    
+    
+    

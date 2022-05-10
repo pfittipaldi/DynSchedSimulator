@@ -10,32 +10,25 @@ This class contains functions that interface to all queues in the system, both o
 import random as rd
 import numpy as np
 
-def Generate(Q):
-    for queue in Q:
-        queue.Generate();
-        
+               
+def Demand(Q):
+    for i in range(len(Q)):
+        Q[i].Demand();
+
 def Loss(Q,LossParam):
     for q in Q:
         q.Loss(LossParam)
-        
+
+def Generate(Q):
+    for queue in Q:
+        queue.Generate();
+                
 def Consume(Q):
     for queue in Q:
         if (queue.serv == "service"):
             queue.Consume();
-
-def Evolve(Q,M,R):
-    Q_t = np.array([q.Qdpairs for q in Q])
-    Q_t1 = Q_t + M@R
-    for i in range(len(Q)):
-        Q[i].Qdpairs = int(max(Q_t1[i],0))
-               
-def Demand(Q):
-    D = np.zeros(len(Q))
-    for i in range(len(Q)):
-        D[i] = Q[i].Demand();
             
 def Schedule(Q,connectedto,transitions):
-    transitions = np.array(transitions)
     SETS_transitions = np.array([set(t) for t in transitions])
     R = np.zeros(len(transitions)) # Output scheduling decision
     nodes = connectedto.keys()
@@ -57,5 +50,10 @@ def Schedule(Q,connectedto,transitions):
             Q_Ready = [q for q in connectedto[ActiveNode] if q.Qdpairs> 0]
     return R
  
+def Evolve(Q,M,R):
+    Q_t = np.array([q.Qdpairs for q in Q])
+    Q_t1 = Q_t + M@R
+    for i in range(len(Q)):
+        Q[i].Qdpairs = Q_t1[i]
     
     
