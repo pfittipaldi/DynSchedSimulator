@@ -27,6 +27,7 @@ class queueconstraints():
         self.transitions=set()
         self.transitionsfrom=dict()
         self.transitionsto=dict()
+        self.transitionsreference = set()
         self.sinks=set()
     
     def addqueue(self, label, initval=0):
@@ -39,19 +40,22 @@ class queueconstraints():
     
     def addtransition(self, transition, strict=False):
         """transition is a queuevent object"""
-        if not strict :
-            def qaction(q, dic):
-               self.addqueue(q)
-               dic[q]=transition
-        else :
-            qaction = lambda q, dic : dic[q] #raises an error if q is not here
-        for q in transition.inputs : qaction(q, self.transitionsfrom)
-        for q in transition.outputs: qaction(q, self.transitionsto)
-        
-        self.transitions.add(transition)
+        if str(transition) not in self.transitionsreference:
+            if not strict :
+                def qaction(q, dic):
+                   self.addqueue(q)
+                   dic[q]=transition
+            else :
+                qaction = lambda q, dic : dic[q] #raises an error if q is not here
+            for q in transition.inputs : qaction(q, self.transitionsfrom)
+            for q in transition.outputs: qaction(q, self.transitionsto)
+            
+            self.transitions.add(transition)
+            self.transitionsreference.add(str(transition)) # Added this line to avoid having duplicates while circumventing the fact that the "in" operator is not defined for custom classes.
         
     def addsink(self,q):
-        self.sinks.add(q)
+        if q not in self.sinks:
+            self.sinks.add(q)
 
     def graph(self):
         G = nx.DiGraph()
@@ -116,9 +120,8 @@ class eswapnet():
                                     name=f'{a}[{b}]{c}' ) )
 def smalltest():
     qnet = eswapnet()
-    qnet.addpath('abc')
-    qnet.addpath('bcd')
     qnet.addpath('abcd')
+    qnet.addpath('bcde')
 #    qnet.addpath('AbcD')
     
     M, qs, ts = qnet.QC.matrix(with_sinks=True)
@@ -131,5 +134,5 @@ def smalltest():
     plt.figure()
     pos = nx.nx_pydot.pydot_layout(QG, prog='dot')
     nx.draw(QG, pos, with_labels=True, node_shape='s') #one of 'so^>v<dph8'
-    return
+    return qnet
 

@@ -29,7 +29,7 @@ def Consume(Q):
             queue.Consume();
             
 def Schedule(Q,connectedto,transitions):
-    SETS_transitions = np.array([set(t) for t in transitions])
+    transitions = np.array(transitions)
     R = np.zeros(len(transitions)) # Output scheduling decision
     nodes = connectedto.keys()
     nodes = rd.sample(nodes,k=len(nodes))
@@ -40,8 +40,9 @@ def Schedule(Q,connectedto,transitions):
             childnode1 = next(i for i in parent1.nodes if i != ActiveNode); 
             childnode2 = next(i for i in parent2.nodes if i != ActiveNode); 
             
-            tr = set([childnode1,"[",ActiveNode,childnode2,"]"])
-            Rindex_toincrease = np.where(SETS_transitions == tr)
+            tr1 = childnode1 + "[" + ActiveNode + "]" + childnode2
+            tr2 = childnode2 + "[" + ActiveNode + "]" + childnode1
+            Rindex_toincrease = np.where((transitions == tr1) + (transitions == tr2))
             R[Rindex_toincrease]+=1
             
             parent1.ScheduleOUT() # This removes the scheduled pairs from the queues' pair counters
