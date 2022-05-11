@@ -19,7 +19,7 @@ with open("inputs.in") as f:
 if PhotonLifeTime == "Inf":
     LossParam = 1
 else:
-    LossParam = 1 - npexp(-t_step/PhotonLifeTime)
+    LossParam = np.exp(-t_step/PhotonLifeTime)
 
 print(f"##############################Recap:##############################")
 print(f"- {topologyname} topology, {n_points}x{n_points} pixels")

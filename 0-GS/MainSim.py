@@ -34,7 +34,7 @@ def Sim(BatchInput,memoDict):
     if PhotonLifeTime == "Inf":
         LossParam = 1
     else:
-        LossParam = 1 - np.exp(-t_step/PhotonLifeTime)
+        LossParam = np.exp(-t_step/PhotonLifeTime)
     
     # Deriving the scheduling matrix and the lists of queues and scheduling rates
     # from FG's code, see fg.smalltest() for more information    
