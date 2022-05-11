@@ -12,7 +12,7 @@ class Queue:
         self.type = "virtual" # Every queue is initialized as virtual.
         self.serv = "regular"
         self.Qdpairs = 0; # Queued pairs, initialized to zero.
-        self.scheduledout = 0
+        #self.scheduledout = 0
         self.demands = 0
         #self.rng = np.random.default_rng()
         self.rng = KnockoffNpRandom()
@@ -63,7 +63,7 @@ class Queue:
         self.demands -= to_consume
    
     def ScheduleOUT(self): 
-        self.scheduledout += 1
+        #self.scheduledout += 1
         self.Qdpairs -= 1
         
  
