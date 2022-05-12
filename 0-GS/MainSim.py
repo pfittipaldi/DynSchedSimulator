@@ -65,12 +65,15 @@ def Sim(BatchInput,memoDict):
     
     ######################################## MAIN LOOP
     for Maintimestep in range(time_steps):
-        AllQueues.Demand(Q)
-        AllQueues.Loss(Q, LossParam)
-        AllQueues.Generate(Q)
+        Dt = [q.demands for q in Q]
+        Qt = [q.Qdpairs for q in Q]
         AllQueues.Consume(Q)
+        B = AllQueues.Demand(Q)
+        L = AllQueues.Loss(Q, LossParam)
+        A = AllQueues.Generate(Q) # B,L and A here are only for debugging purposes, since the queues' counters are implicitly updated.
         R = AllQueues.Schedule(Q,ConnectedTo,ts)
         AllQueues.Evolve(Q,M,R)
+        
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]
     Tot_dem_rate = sum(BatchInput.values())

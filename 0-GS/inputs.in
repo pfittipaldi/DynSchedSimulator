@@ -21,9 +21,9 @@ n_points = 65 # Number of pixels for the stability plot
 SPair_1 = ("A","E") #Service pairs
 SPair_2 = ("B","F")
 
-DemRates1 = np.linspace(1,75000,n_points) # points along the first and second pair directions
-DemRates2 = np.linspace(1,75000,n_points)
+DemRates1 = np.linspace(75000,75000,n_points) # points along the first and second pair directions
+DemRates2 = np.linspace(75000,75000,n_points)
 
-ParallelRun = True    # Huge performance gain if True. This should be set to False only for debugging reasons (multiprocessing does not support breakpoints)
+ParallelRun = False    # Huge performance gain if True. This should be set to False only for debugging reasons (multiprocessing does not support breakpoints)
 
 Plot200Diag = False

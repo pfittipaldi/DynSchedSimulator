@@ -12,16 +12,22 @@ import numpy as np
 
                
 def Demand(Q):
-    for i in range(len(Q)):
-        Q[i].Demand();
+    B = np.zeros(len(Q))
+    for i in range(len(B)):
+        B[i] = Q[i].Demand();
+    return B
 
 def Loss(Q,LossParam):
-    for q in Q:
-        q.Loss(LossParam)
+    L = np.zeros(len(Q))
+    for i in range(len(L)):
+        L[i] = Q[i].Loss(LossParam)
+    return L
 
 def Generate(Q):
-    for queue in Q:
-        queue.Generate();
+    A = np.zeros(len(Q))
+    for i in range(len(A)):
+        A[i] = Q[i].Generate();
+    return A
                 
 def Consume(Q):
     for queue in Q:
@@ -66,7 +72,7 @@ def Schedule(Q,connectedto,transitions):
     return R
 
 def Evolve(Q,M,R):
-    Q_t = np.array([q.Qdpairs for q in Q])
+    Q_t = np.array([q.Qdpairs + q.scheduledout for q in Q]) # I have to consider both "free" stored pairs and "scheduled out" stored pairs
     Q_t1 = Q_t + M@R
     for i in range(len(Q)):
         Q[i].Qdpairs = Q_t1[i]
