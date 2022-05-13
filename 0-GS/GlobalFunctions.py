@@ -42,37 +42,34 @@ def Schedule(Q,connectedto,transitions):
     for ActiveNode in nodes:
         Q_Ready = {q.nodes:q for q in connectedto[ActiveNode] if q.Qdpairs> 0}
         TransitionPool = [tr for tr in transitions if frozenset((tr[0],tr[2])) in Q_Ready.keys() and frozenset((tr[4],tr[2])) in Q_Ready.keys()] # This behemoth of a list comprehension is horrible.
-        
         #AllowedTransitions = set((tr for tr in transitions if tr[2] == ActiveNode)) # These transitions are ALLOWED: the routing permits them.
         
         #PossibleTransitions = GeneratePossibleTransitions(Q_Ready) # These transitions are POSSIBLE: there are pairs to perform them, but they are not necessarily included in the routing.
         
         #FinalTransitions = AllowedTransitions.intersect(PossibleTransitions) # We need transitions that are both ALLOWED and POSSIBLE.
-        
+        iterations = 0
         while len(TransitionPool) >= 1:
             ActiveTransition = rd.sample(TransitionPool, 1)[0]
             
             childnode1 = ActiveTransition[0]
             childnode2 = ActiveTransition[4] 
-            Rindex_toincrease = np.where(transitions == ActiveTransition)
-            R[Rindex_toincrease]+=1
-            
-            
+            Rindex_toincrease = np.where(transitions == ActiveTransition)           
             parent1_Nodes = frozenset((ActiveTransition[0],ActiveTransition[2]))
             parent2_Nodes = frozenset((ActiveTransition[4],ActiveTransition[2]))
-
             parent1 = Q_Ready[parent1_Nodes]
             parent2 = Q_Ready[parent2_Nodes]
-
-            parent1.ScheduleOUT() # This removes the scheduled pairs from the queues' pair counters
-            parent2.ScheduleOUT()
+            
+            to_schedule = min(parent1.Qdpairs,parent2.Qdpairs)
+            R[Rindex_toincrease]+=to_schedule
+            parent1.ScheduleOUT(to_schedule) # This removes the scheduled pairs from the queues' pair counters
+            parent2.ScheduleOUT(to_schedule)
             
             Q_Ready = {q.nodes:q for q in connectedto[ActiveNode] if q.Qdpairs> 0}
             TransitionPool = [tr for tr in transitions if frozenset((tr[0],tr[2])) in Q_Ready.keys() and frozenset((tr[4],tr[2])) in Q_Ready.keys()] # This behemoth of a list comprehension is horrible.
     return R
 
 def Evolve(Q,M,R):
-    Q_t = np.array([q.Qdpairs + q.scheduledout for q in Q]) # I have to consider both "free" stored pairs and "scheduled out" stored pairs
+    Q_t = np.array([q.GetTotPairsAndFlushOutBuffer() for q in Q]) # I have to consider both "free" stored pairs and "scheduled out" stored pairs
     Q_t1 = Q_t + M@R
     for i in range(len(Q)):
         Q[i].Qdpairs = Q_t1[i]

@@ -63,9 +63,14 @@ class Queue:
         self.Qdpairs -= to_consume
         self.demands -= to_consume
    
-    def ScheduleOUT(self): 
-        self.scheduledout += 1
-        self.Qdpairs -= 1
+    def ScheduleOUT(self,to_schedule): 
+        self.scheduledout += to_schedule
+        self.Qdpairs -= to_schedule
+    
+    def GetTotPairsAndFlushOutBuffer(self):
+        totPairs = self.Qdpairs + self.scheduledout
+        self.scheduledout = 0
+        return totPairs
         
  
     

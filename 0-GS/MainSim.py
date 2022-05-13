@@ -62,18 +62,20 @@ def Sim(BatchInput,memoDict):
         ConnectedTo[label] = [q for q in Q if (label in q.nodes)]
     
       
-    
+    watch = np.zeros(time_steps)
     ######################################## MAIN LOOP
     for Maintimestep in range(time_steps):
         Dt = [q.demands for q in Q]
         Qt = [q.Qdpairs for q in Q]
+        if Maintimestep >= 30:
+            breakpoint()
         AllQueues.Consume(Q)
         B = AllQueues.Demand(Q)
         L = AllQueues.Loss(Q, LossParam)
         A = AllQueues.Generate(Q) # B,L and A here are only for debugging purposes, since the queues' counters are implicitly updated.
         R = AllQueues.Schedule(Q,ConnectedTo,ts)
-        AllQueues.Evolve(Q,M,R)
-        
+        watch[Maintimestep] = (M@R)[0]
+        AllQueues.Evolve(Q,M,R)    
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]
     Tot_dem_rate = sum(BatchInput.values())
