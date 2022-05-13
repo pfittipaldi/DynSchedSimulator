@@ -67,8 +67,6 @@ def Sim(BatchInput,memoDict):
     for Maintimestep in range(time_steps):
         Dt = [q.demands for q in Q]
         Qt = [q.Qdpairs for q in Q]
-        if Maintimestep >= 30:
-            breakpoint()
         AllQueues.Consume(Q)
         B = AllQueues.Demand(Q)
         L = AllQueues.Loss(Q, LossParam)
