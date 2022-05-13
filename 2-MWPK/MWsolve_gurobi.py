@@ -45,7 +45,7 @@ def UpdateConstraints(Q,node,qlabels,beta,Dt,d_arr_rates,Bt,N,
             ExpQt1[i] = Qt[i] + At[i] - Lt[i] # However, if the queue is connected, the upper bounds are exact. 
             ExpDt1[i] = Dt[i] + Bt[i]
     h = np.hstack((ExpQt1,ExpDt1)) # In the calculations this looks like a vstack. However, numpy has no concept of row/column vectors and will try to create a matrix if asked for a vstack between two vectors
-    q = 2*beta*ExpDt1@N + ExpQt1@M # Linear term for the OF
+    q = 2*beta*ExpDt1@N #+ ExpQt1@M # Linear term for the OF
     return q, h
 
 def solve_lp(q, G=None, h=None, A=None, b=None):
