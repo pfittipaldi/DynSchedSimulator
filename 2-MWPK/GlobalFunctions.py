@@ -30,20 +30,8 @@ def Demand(Q):
 def Evolve(Q,M,R):
     Q_t = np.array([q.Qdpairs for q in Q])
     D_t = np.array([q.demands for q in Q])
-    D_t1 = D_t - R[-len(Q):]
-    Q_t1 = Q_t + M@R
+    D_t1 = D_t - R[-len(Q):] # B is implicitly accounted for
+    Q_t1 = Q_t + M@R # A and L are implicitly accounted for
     for i in range(len(Q)):
-        Q[i].Qdpairs = int(max(Q_t1[i],0))
+        Q[i].Qdpairs = Q_t1[i]
         Q[i].demands = D_t1[i]
-
-def CheckActualFeasibility(M,N,R,Q,D,L,A,B): # This method checks if the scheduler's order are actually feasible
-                                             # and counts the instances in which they are not.
-    G = np.vstack((M,N))
-    scheduled = -G@R 
-    error = False
-    actualQ = Q - L + A
-    actualD = np.array(D) + np.array(B)
-    actual_qp_q = np.hstack((actualQ,actualD))
-    check = scheduled > actual_qp_q
-    error = check.any()
-    return error

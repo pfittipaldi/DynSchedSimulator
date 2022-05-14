@@ -27,7 +27,8 @@ class queueconstraints():
         self.transitions=set()
         self.transitionsfrom=dict()
         self.transitionsto=dict()
-        self.transitionsreference = set()
+        self.transitionsreference = set() # I introduced this to keep track of which transitions are already in QC.
+                                          # ...with an object that is a builtin type.
         self.sinks=set()
     
     def addqueue(self, label, initval=0):
@@ -38,55 +39,44 @@ class queueconstraints():
             self.transitionsto[label]=[]
 
     
-    def addtransition(self, transition, strict=False):
+    def addtransition(self, transition):
         """transition is a queuevent object"""
         if str(transition) not in self.transitionsreference:
-            if not strict :
-                def qaction(q, dic):
-                   self.addqueue(q)
-                   dic[q]=transition
-            else :
-                qaction = lambda q, dic : dic[q] #raises an error if q is not here
+            def qaction(q, dic):
+               self.addqueue(q)
+               dic[q]=transition
             for q in transition.inputs : qaction(q, self.transitionsfrom)
             for q in transition.outputs: qaction(q, self.transitionsto)
-            
             self.transitions.add(transition)
             self.transitionsreference.add(str(transition)) # Added this line to avoid having duplicates while circumventing the fact that the "in" operator is not defined for custom classes.
         
-    def addsink(self,q):
+    def addsink(self,q): # "Sinks" are the endpoints of routes. They were treated separately in this version of the original code, and while that is not strictly needed it does not hurt, so I kept it.
         if q not in self.sinks:
             self.sinks.add(q)
 
     def graph(self):
         G = nx.DiGraph()
-        
         for t in self.transitions:
             G.add_edges_from(((inp, t.name) for inp in t.inputs))
             G.add_edges_from(((t.name, out) for out in t.outputs))
         return G
-    def matrix(self, with_sinks=True):
+    def matrix(self):
         lqs = list(self.queues.keys())
-        nsinks=len(self.sinks)
         lqs.sort(key=lambda q: q in self.sinks) 
             # lqs[-nsinks:] are the sinks
             # lqs[:-nsinks] are the other queues
         qi = {q:i for i,q in enumerate(lqs)}
         lts=list(self.transitions)
         ltns=[t.name for t in lts]
-   #     ti = {t:i for i,t in enumerate(lts)}
         M = np.zeros((len(lqs), len(lts)))
         for j,t in enumerate(lts):
               for q in t.inputs : M[qi[q],j] -=1
               for q in t.outputs: M[qi[q],j] +=1
-        if with_sinks : return M, lqs, ltns
-        else : return M[:-nsinks,:] , lqs[:-nsinks], ltns
-     #TODO a test functions
-     #  * the 3 dicts should have the same keys (but source and sink ?)
-     # Store/updaute graph
-
+        return M, lqs, ltns
 
 def edgelabel(u, v, sep=''):
      return sep.join(str(x) for x in (u,v))
+
 class eswapnet():
     def __init__(self):
         self.QC=queueconstraints()
@@ -124,7 +114,7 @@ def smalltest():
     qnet.addpath('bcde')
 #    qnet.addpath('AbcD')
     
-    M, qs, ts = qnet.QC.matrix(with_sinks=True)
+    M, qs, ts = qnet.QC.matrix()
     plt.figure()
     nx.draw(qnet.G, with_labels=True)
     

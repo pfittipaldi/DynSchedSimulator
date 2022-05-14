@@ -31,7 +31,7 @@ def Sim(BatchInput,memoDict):
     qnet = fg.eswapnet()
     for rt in routes:
         qnet.addpath(rt)
-    M, QLabels, R_components = qnet.QC.matrix(with_sinks=True)
+    M, QLabels, R_components = qnet.QC.matrix()
     
     ### Building the model 
     Q = [Queue(tq[0],tq[1]) for tq in QLabels]

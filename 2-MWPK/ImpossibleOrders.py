@@ -10,7 +10,7 @@ def BreakConflicts(R,G,Q,rank,qs):
     doubleQ = np.hstack((actualQ,actualQ)) # This vector is useful (see later) in the offchance that more demands are scheduled to be served than there are available pairs 
     doubleqs = np.hstack((qs,qs)) # This vector contains ALL labels, i.e. for demand queues too.	
     maxRank = max(rank.values())
-    scheduled = -G@R
+    scheduled = -M@R
     conflictIndices = list(np.flatnonzero(scheduled > actual_qp_q)) # Find which constraints are broken  
     while conflictIndices != []:
         rng.shuffle(conflictIndices) # Tackle conflicts in a random order...
@@ -25,14 +25,14 @@ def BreakConflicts(R,G,Q,rank,qs):
             rng.shuffle(concurrents) # After serving demand, the rest of the resources are assigned randomly.
             for j in concurrents:
                 if to_reassign < 0:
-                    to_reassign = 0
+                    to_reassign = 0 #This should never happen
                 R[j] = min(R[j],to_reassign)
                 to_reassign-=R[j]
         scheduled = -G@R
-        conflictIndices = list(np.flatnonzero(scheduled > actual_qp_q)) # Find which constraints are broken  
+        conflictIndices = list(np.flatnonzero(scheduled > actual_qp_q)) # Rebuild conflict list  
         workingRank+=1
         if workingRank > maxRank+1:
-            print(f"Unmanageable conflict.")
+            print(f"Unmanageable conflict.Refusing order.")
             R = np.zeros(len(R))
             break
     return R

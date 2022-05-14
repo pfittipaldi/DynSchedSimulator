@@ -41,7 +41,7 @@ def Sim(BatchInput,memoDict):
     qnet = fg.eswapnet()
     for rt in routes:
         qnet.addpath(rt)
-    M, qs, ts = qnet.QC.matrix(with_sinks=True)
+    M, qs, ts = qnet.QC.matrix()
     
     ### Building the model 
     
