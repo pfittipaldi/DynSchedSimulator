@@ -10,12 +10,11 @@ from KnockOffRand import KnockoffNpRandom
 
 class Queue:
 
-    def __init__(self,nd1,nd2,tran_prob):
+    def __init__(self,nd1,nd2):
         self.nodes = frozenset([nd1,nd2]) # This set will contain the extremes of the queue. A set was chosen because it is UNORDERED.
         self.type = "virtual" # Every queue is initialized as virtual.
         self.serv = "regular"
         self.Qdpairs = 0; # Queued pairs, initialized to zero.
-        self.T_prob = tran_prob # Transmission probability
         self.demands = 0; # Requests, initialized to zero
         #self.rng = np.random.default_rng()
         self.rng = KnockoffNpRandom()
@@ -39,8 +38,7 @@ class Queue:
         rng = self.rng
         if (self.type == "physical"): # Only physical queues generate, but implementing this check here allows to call...
                                       # ... the Generate method for all queues indistinctly.
-            to_generate = self.rng.poisson(self.GenPParam)
-            generated = sum(rng.random(size=to_generate) <= self.T_prob)
+            generated = self.rng.poisson(self.GenPParam)
             self.Qdpairs += generated
             return generated
         else:

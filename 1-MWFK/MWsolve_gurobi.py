@@ -36,7 +36,7 @@ def UpdateConstraints(beta,Dt,Bt,N,
     h = np.hstack((Qt1,Dt1)) # In the calculations this looks like a vstack. However, numpy has no concept of row/column vectors 
                                    # and will try to create a matrix if asked for a vstack between two vectors
     
-    q = 2*beta*Dt1@N + Qt1@M #Linear term of the OF
+    q = beta*Dt1@N + Qt1@M #Linear term of the OF
     
     return q, h
 

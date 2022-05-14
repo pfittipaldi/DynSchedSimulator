@@ -27,4 +27,4 @@ DemRates2 = np.linspace(1,200000,n_points)
 
 Plot200Diag = False
 
-ParallelRun = True    # Huge performance gain if True. This should be set to False only for debugging reasons (multiprocessing does not support breakpoints)
+ParallelRun = False    # Huge performance gain if True. This should be set to False only for debugging reasons (multiprocessing does not support breakpoints)

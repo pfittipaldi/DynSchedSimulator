@@ -34,7 +34,7 @@ def Sim(BatchInput,memoDict):
     M, QLabels, R_components = qnet.QC.matrix(with_sinks=True)
     
     ### Building the model 
-    Q = [Queue(tq[0],tq[1],tran_prob=1) for tq in QLabels]
+    Q = [Queue(tq[0],tq[1]) for tq in QLabels]
     
     [q.SetPhysical(ArrRates[q.nodes],t_step) for q in Q if q.nodes in ArrRates]
     [q.SetService(BatchInput[q.nodes],t_step) for q in Q if q.nodes in BatchInput]
