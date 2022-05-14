@@ -73,8 +73,7 @@ def Sim(BatchInput,memoDict):
         qp_q, qp_h = mw.UpdateConstraints(beta,Dt,Bt,Ns,Qt,L,A,Ms)
         R[:,Maintimestep], memo = mw.Schedule(qp_q, qp_G, qp_h, qp_A, qp_b,Dt ,memo,memo_len)
         AllQueues.Evolve(Q,Ms,R[:,Maintimestep]) # Note to me: this method DOES evolve demands, it just does it directly on the q objects
-    
-    
+        
     ### OUTPUT
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]
