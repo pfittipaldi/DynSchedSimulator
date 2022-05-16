@@ -1,7 +1,7 @@
 PhotonLifeTime = 10e-6 #s, average photon lifetime inside the quantum memories. Should be always higher than time step.
                        # Set to "Inf" for lossless simulation
 t_step = 1e-6; # Length of the time step, s
-time_steps = int(1e3); # Number of steps to simulate per pixel
+time_steps = int(1e4); # Number of steps to simulate per pixel
 memo_len=int(time_steps/2) # How many configurations should be memoized - this refers to the memoization inside the pixels
 beta = 1  # Demand weight in the scheduling calculation     
 
@@ -25,6 +25,6 @@ SPair_2 = ("B","F")
 DemRates1 = np.linspace(1,1000000,n_points) # points along the first and second pair directions
 DemRates2 = np.linspace(1,1000000,n_points)
 
-Plot200Diag = False
+PlotDiag= True
 
 ParallelRun = True    # Huge performance gain if True. This should be set to False only for debugging reasons (multiprocessing does not support breakpoints)

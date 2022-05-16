@@ -81,19 +81,19 @@ if __name__ == '__main__':
     
     
     
-    plt.figure(1)
+    plt.figure(1,figsize=(2.5,2.5))
     plt.imshow(unserved*100,vmin=0,vmax=10)
     plt.colorbar()
     
-    n_labels = 25
+    n_labels = 20
     xlabels = ['{:.2f}'.format(i) for i in np.linspace(DemRates1[0],DemRates1[-1],n_labels)/1000]
     ylabels = ['{:.2f}'.format(i) for i in np.linspace(DemRates2[0],DemRates2[-1],n_labels)/1000]
     ylabels = np.flip(ylabels)
 
-    if Plot200Diag:
+    if PlotDiag:
         try:
-            xintersect = np.where(DemRates1 == np.atleast_1d(200000))[0]
-            yintersect = np.where(np.flip(DemRates2) == np.atleast_1d(200000))[0]
+            xintersect = np.where(DemRates1 == np.atleast_1d(1000000))[0]
+            yintersect = np.where(np.flip(DemRates2) == np.atleast_1d(1000000))[0]
             xline = [0, xintersect]
             yline = [yintersect, len(unserved)-1]
             plt.plot(xline,yline)
