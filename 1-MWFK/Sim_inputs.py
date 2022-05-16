@@ -1,3 +1,4 @@
+import numpy as np
 PhotonLifeTime = 10e-6 #s, average photon lifetime inside the quantum memories. Should be always higher than time step.
                        # Set to "Inf" for lossless simulation
 t_step = 1e-6; # Length of the time step, s
