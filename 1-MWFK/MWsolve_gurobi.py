@@ -35,7 +35,7 @@ def UpdateConstraints(beta,Dt,Bt,N,
 
     h = np.hstack((Qt1,Dt1)) # In the calculations this looks like a vstack. However, numpy has no concept of row/column vectors 
                                    # and will try to create a matrix if asked for a vstack between two vectors
-    q = Dt1@N #Weights for the MW problem, ONLY in terms of demand.
+    q = Dt1@N + Qt1@M #Weights for the MW problem, ONLY in terms of demand.
     return q, h
 
 def solve_lp(q, G=None, h=None, A=None, b=None):

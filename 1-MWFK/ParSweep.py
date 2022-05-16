@@ -11,14 +11,13 @@ from time import time
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 from datetime import datetime
-
-with open("inputs.in") as f:
-    exec(f.read())
+from Sim_inputs import *
+  
 
 if PhotonLifeTime == "Inf":
     LossParam = 1
 else:
-    LossParam = 1 - t_step/PhotonLifeTime
+    LossParam = np.exp(-t_step/PhotonLifeTime)
 
 
 print(f"###############Recap:###############")

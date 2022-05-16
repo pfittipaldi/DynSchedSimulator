@@ -4,9 +4,7 @@ import numpy as np
 from Q_class import Queue
 import Fred as fg
 from ImpossibleOrders import BreakConflicts
-
-with open("inputs.in") as f:
-    exec(f.read())
+from Sim_inputs import *
 
 
 def Sim(BatchInput,memoDict):
@@ -75,7 +73,7 @@ def Sim(BatchInput,memoDict):
     if PhotonLifeTime == "Inf":
         LossParam = 1
     else:
-        LossParam = 1 - t_step/PhotonLifeTime
+        LossParam = np.exp(-t_step/PhotonLifeTime)
     
     for Maintimestep in range(time_steps):
         Qt = np.array([q.Qdpairs for q in Q])
@@ -97,10 +95,10 @@ def Sim(BatchInput,memoDict):
         if AllQueues.CheckActualFeasibility(Ms,Ns,R[:,Maintimestep],Qt,Dt,L,A,B):
             violationsPre+=1
             R[:,Maintimestep] = BreakConflicts(R[:,Maintimestep],qp_G,Q,rank,qs)
-        
-        if AllQueues.CheckActualFeasibility(Ms,Ns,R[:,Maintimestep],Qt,Dt,L,A,B):
-            violations+=1
         AllQueues.Evolve(Q,Ms,R[:,Maintimestep])
+        
+        # if sum(R[:,Maintimestep]) != 0 and Maintimestep > 1000:
+        #     breakpoint()
     
     if quiet == False:
         print(f"Impossible orders: {violationsPre}/{time_steps}. After correction: {violations}/{time_steps}")

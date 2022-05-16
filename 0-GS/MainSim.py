@@ -11,9 +11,8 @@ import GlobalFunctions as AllQueues
 from Q_class import Queue
 import Fred as fg
 import numpy as np
+from Sim_inputs import *
 
-with open("inputs.in") as f: # Importing variables
-    exec(f.read())
 
 
 def Sim(BatchInput,memoDict):
@@ -24,10 +23,6 @@ def Sim(BatchInput,memoDict):
         if flatInput[1][0] >= flatMemo[1][0] and flatInput[1][1] >= flatMemo[1][1]:
             output = memoDict[i]
             return output
-    ######################################## INPUTS 
-    
-    
-    # See inputs.in file!
     
     ######################################## READING INPUT
     
@@ -74,10 +69,14 @@ def Sim(BatchInput,memoDict):
         R = AllQueues.Schedule(Q,ConnectedTo,ts)
         watch[Maintimestep] = (M@R)[0]
         AllQueues.Evolve(Q,M,R)    
+        # if sum(R) != 0 and Maintimestep >= 1000:
+        #     breakpoint()
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]
     Tot_dem_rate = sum(BatchInput.values())
     unserved = sum(D_final)/(t_step*time_steps*Tot_dem_rate) #Unserved demands at the end divided by an approximation of the total incoming demand
+    
+    
     if unserved >= 0.18:
         to_store = tuple(zip(*BatchInput.items()))
         memoDict[to_store] = (unserved, Q_final, D_final) 

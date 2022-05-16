@@ -13,9 +13,7 @@ import numpy as np
 from Q_class import Queue
 import Fred as fg
 import numpy as np
-
-with open("inputs.in") as f:
-    exec(f.read())
+from Sim_inputs import *
 
 
 def Sim(BatchInput,memoDict):   
@@ -73,7 +71,8 @@ def Sim(BatchInput,memoDict):
         qp_q, qp_h = mw.UpdateConstraints(beta,Dt,Bt,Ns,Qt,L,A,Ms)
         R[:,Maintimestep], memo = mw.Schedule(qp_q, qp_G, qp_h, qp_A, qp_b,Dt ,memo,memo_len)
         AllQueues.Evolve(Q,Ms,R[:,Maintimestep]) # Note to me: this method DOES evolve demands, it just does it directly on the q objects
-        
+        # if sum(R[:,Maintimestep]) != 0 and Maintimestep > 1000:
+        #     breakpoint()
     ### OUTPUT
     D_final = [q.demands for q in Q]
     Q_final = [q.Qdpairs for q in Q]

@@ -48,7 +48,7 @@ class Queue:
 
     def Loss(self,LossParam):
         rng=self.rng
-        to_check = self.Qdpairs
+        to_check = int(self.Qdpairs)
         lost = sum(rng.random(size=to_check) <= (1-LossParam))
         self.Qdpairs -= lost
         return lost
