@@ -1,5 +1,5 @@
 # WARNING: DEPRECATED CODE
-This code has been entirely superseded by [The Journal version](https://github.com/pfittipaldi/DynSchedSimulator_Journal), which features a major reimplementation and cleanup of the entire code.
+This code has been entirely superseded by [a new version](https://github.com/pfittipaldi/DynSchedSimulator_Journal), which features a major reimplementation and cleanup of the entire code.
 Readers are advised to refer to the new repository, which reproduces the results of this code in full. This repo is kept for reproducibility purposes only.
 
 
