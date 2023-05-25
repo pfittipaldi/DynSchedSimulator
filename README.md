@@ -1,3 +1,10 @@
+# WARNING: DEPRECATED CODE
+This code has been entirely superseded by [The Journal version](https://github.com/pfittipaldi/DynSchedSimulator_Journal), which features a major reimplementation and cleanup of the entire code.
+Readers are advised to refer to the new repository, which reproduces the results of this code in full. This repo is kept for reproducibility purposes only.
+
+
+
+
 # DynSchedSimulator
 This repository contains the code employed to produce the results presented in ["A Linear Algebraic Framework for Quantum Internet Dynamic Scheduling"](https://arxiv.org/pdf/2205.10000.pdf).
 
